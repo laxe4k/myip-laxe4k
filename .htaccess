@@ -1,0 +1,41 @@
+
+RewriteEngine on
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
+<IfModule Litespeed>
+</IfModule>
+# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
+
+AddDefaultCharset UTF-8
+
+<Files .htaccess>
+    order allow,deny
+    deny from all
+</Files>
+
+Options All -Indexes
+
+RewriteEngine On
+RewriteBase /
+
+<if "%{HTTP_HOST} =~ /trnx1794-|sc1trnx1794-/">
+    # skip les 2 prochaines règles si le domaine contient trnx1794- ou sc1trnx1794-
+    RewriteRule ^ - [S=2]
+</if>
+
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^.]+)/$ http://%{HTTP_HOST}/$1 [R=301,L]
+
+RewriteCond %{THE_REQUEST} ^(.+)\.php([^\ ]*)?\ HTTP/
+RewriteRule ^(.+)\.php$ http://%{HTTP_HOST}/$1 [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+
