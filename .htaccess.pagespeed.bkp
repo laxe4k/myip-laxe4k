@@ -29,9 +29,6 @@ RewriteBase /
     RewriteRule ^ - [S=2]
 </if>
 
-RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
-
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
