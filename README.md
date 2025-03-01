@@ -86,7 +86,3 @@ Ce projet est sous licence MIT. Veuillez consulter le fichier `LICENSE` pour plu
 ## Auteur
 
 Développé par [Laxe4k](https://github.com/laxe4k).
-
----
-
-*Note : remplacez `laxe4k` par votre nom d'utilisateur GitHub dans les liens et les URLs.*
