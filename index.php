@@ -146,10 +146,22 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                 <div class="info-item">
                     <span class="label">Mon IPv4 :</span>
                     <span class="value" id="ipv4-value"><?php echo htmlspecialchars($ipv4_server); ?><span class="loader" id="ipv4-loader"></span></span>
+                    <button class="copy-btn" data-clipboard-target="#ipv4-value" title="Copier IPv4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                    </button>
                 </div>
                 <div class="info-item">
                     <span class="label">Mon IPv6 :</span>
                     <span class="value" id="ipv6-value"><?php echo htmlspecialchars($ipv6_server); ?><span class="loader" id="ipv6-loader"></span></span>
+                    <button class="copy-btn" data-clipboard-target="#ipv6-value" title="Copier IPv6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                        </svg>
+                    </button>
                 </div>
             </section>
 
@@ -213,11 +225,25 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const ip = await response.text();
-                    element.textContent = ip.trim();
+                    // Nettoyer le contenu avant de mettre à jour, enlever le loader s'il est là
+                    const currentContent = element.innerHTML;
+                    const loaderRegex = /<span class="loader".*?><\/span>/i;
+                    if (loaderRegex.test(currentContent)) {
+                        element.innerHTML = ip.trim();
+                    } else {
+                        element.textContent = ip.trim();
+                    }
                 } catch (error) {
                     console.warn(`Could not fetch IP from ${url}:`, error.message);
                     // Conserve la valeur N/A ou celle détectée par le serveur si la requête échoue
-                    element.textContent = element.textContent.replace(/<span class="loader".*?><\/span>/, '').trim() || 'N/A';
+                    // Assurez-vous de ne pas supprimer le loader si l'IP est toujours N/A
+                    if (element.textContent.trim() === 'N/A' || element.textContent.includes('<span class="loader"')) {
+                        // Ne rien faire si c'est N/A ou si le loader est déjà là
+                    } else if (!element.textContent.includes('N/A')) {
+                         // Si une IP était affichée et que le fetch échoue, on ne la remplace pas par N/A
+                    } else {
+                         element.textContent = 'N/A';
+                    }
                 } finally {
                     if (loaderElement) {
                         loaderElement.style.display = 'none';
@@ -226,18 +252,49 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
             };
 
             // Initialiser les loaders
-            if (ipv4ValueEl.textContent.trim() === 'N/A' || ipv4ValueEl.textContent.includes('<span class="loader"')) ipv4LoaderEl.style.display = 'inline-block';
-            else ipv4LoaderEl.style.display = 'none';
-            if (ipv6ValueEl.textContent.trim() === 'N/A' || ipv6ValueEl.textContent.includes('<span class="loader"')) ipv6LoaderEl.style.display = 'inline-block';
-            else ipv6LoaderEl.style.display = 'none';
+            if (ipv4ValueEl.textContent.trim() === 'N/A' || ipv4ValueEl.textContent.includes('<span class="loader"')) {
+                ipv4ValueEl.innerHTML = '<span class="loader" id="ipv4-loader" style="display:inline-block;"></span>';
+            } else {
+                 ipv4LoaderEl.style.display = 'none';
+            }
+            if (ipv6ValueEl.textContent.trim() === 'N/A' || ipv6ValueEl.textContent.includes('<span class="loader"')) {
+                ipv6ValueEl.innerHTML = '<span class="loader" id="ipv6-loader" style="display:inline-block;"></span>';
+            } else {
+                ipv6LoaderEl.style.display = 'none';
+            }
 
-            // Si la valeur initiale est N/A, on la remplace par le loader pour l'affichage
-            if (ipv4ValueEl.textContent.trim() === 'N/A') ipv4ValueEl.innerHTML = '<span class="loader" id="ipv4-loader"></span>';
-            if (ipv6ValueEl.textContent.trim() === 'N/A') ipv6ValueEl.innerHTML = '<span class="loader" id="ipv6-loader"></span>';
 
+            fetchIp('https://ipv4.icanhazip.com', ipv4ValueEl, document.getElementById('ipv4-loader'));
+            fetchIp('https://ipv6.icanhazip.com', ipv6ValueEl, document.getElementById('ipv6-loader'));
 
-            fetchIp('https://ipv4.icanhazip.com', ipv4ValueEl, ipv4LoaderEl);
-            fetchIp('https://ipv6.icanhazip.com', ipv6ValueEl, ipv6LoaderEl);
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.clipboardTarget;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        let textToCopy = targetElement.textContent || targetElement.innerText;
+                        // Retirer le contenu du loader si présent
+                        const loaderSpan = targetElement.querySelector('.loader');
+                        if (loaderSpan) {
+                            textToCopy = textToCopy.replace(loaderSpan.outerHTML, '').trim();
+                        }
+                        
+                        if (textToCopy && textToCopy !== 'N/A' && !textToCopy.includes('<span class="loader"')) {
+                            navigator.clipboard.writeText(textToCopy).then(() => {
+                                // Optionnel: afficher une notification de succès
+                                const originalTitle = button.title;
+                                button.title = 'Copié!';
+                                setTimeout(() => {
+                                    button.title = originalTitle;
+                                }, 1500);
+                            }).catch(err => {
+                                console.error('Erreur lors de la copie: ', err);
+                                // Optionnel: afficher une notification d'erreur
+                            });
+                        }
+                    }
+                });
+            });
         });
     </script>
 </body>

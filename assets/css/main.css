@@ -74,6 +74,23 @@ header h1 {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.copy-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    vertical-align: middle;
+    color: inherit; /* Inherit color from parent for better theme compatibility */
+}
+.copy-btn svg {
+    pointer-events: none; /* Assure que le clic est sur le bouton */
+    display: block; /* Prevents extra space below inline SVG */
+}
+.copy-btn:hover {
+    opacity: 0.7;
+}
+
 footer {
     text-align: center;
     margin-top: 30px;
