@@ -82,3 +82,39 @@ footer {
     font-size: 12px;
     color: #5f6368;
 }
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #202124; /* Dark background */
+        color: #e8eaed; /* Light text */
+    }
+    .container {
+        background-color: #303134; /* Slightly lighter dark for container */
+        box-shadow: 0 1px 2px 0 rgba(0,0,0,0.302), 0 2px 6px 2px rgba(0,0,0,0.149); /* Adjusted shadow for dark */
+    }
+    header h1 {
+        color: #e8eaed; /* Light text for header */
+    }
+    .info-section h2 {
+        color: #8ab4f8; /* Lighter blue for dark mode */
+        border-bottom: 1px solid #5f6368; /* Darker border */
+    }
+    .info-section .info-item:not(:last-child) {
+        border-bottom: 1px solid #5f6368; /* Darker border for items */
+    }
+    .info-item .label {
+        color: #bdc1c6; /* Lighter grey for labels */
+    }
+    .info-item .value {
+        color: #e8eaed; /* Light text for values */
+    }
+    .value .loader {
+        border: 2px solid currentColor; /* Loader will inherit the light text color */
+        border-right-color: transparent;
+    }
+    footer {
+        border-top: 1px solid #5f6368; /* Darker border for footer */
+        color: #bdc1c6; /* Lighter grey for footer text */
+    }
+}
