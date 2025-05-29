@@ -41,7 +41,7 @@ header h1 {
 .info-item {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center; /* Changé de flex-start pour un meilleur alignement vertical */
     padding: 10px 0;
     font-size: 14px;
     line-height: 1.5;
@@ -57,9 +57,16 @@ header h1 {
 }
 .info-item .value {
     color: #202124;
-    text-align: right;
+    text-align: right; /* S'assure que le texte de l'IP est aligné à droite dans son conteneur */
     word-break: break-all;
+    margin-right: 8px; /* Ajoute un petit espace entre l'IP et le bouton de copie */
 }
+
+.value-action-group {
+    display: flex; /* Aligne l'IP et le bouton sur la même ligne */
+    align-items: center; /* Centre verticalement l'IP et le bouton */
+}
+
 .value .loader {
     display: inline-block;
     width: 1em;
@@ -125,6 +132,7 @@ footer {
     }
     .info-item .value {
         color: #e8eaed; /* Light text for values */
+        /* margin-right: 8px; est déjà défini plus haut et s'applique aussi ici */
     }
     .value .loader {
         border: 2px solid currentColor; /* Loader will inherit the light text color */
