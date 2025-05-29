@@ -216,20 +216,16 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
 
             const fetchIp = async (url, element, loaderElement) => {
                 try {
-                    // Timeout pour éviter les attentes indéfinies si le service n'est pas joignable sur ce type d'IP
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 secondes timeout
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                    const response = await fetch(url, {
-                        signal: controller.signal
-                    });
+                    const response = await fetch(url, { signal: controller.signal });
                     clearTimeout(timeoutId);
 
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const ip = await response.text();
-                    // Nettoyer le contenu avant de mettre à jour, enlever le loader s'il est là
                     const currentContent = element.innerHTML;
                     const loaderRegex = /<span class="loader".*?><\/span>/i;
                     if (loaderRegex.test(currentContent)) {
@@ -239,15 +235,7 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                     }
                 } catch (error) {
                     console.warn(`Could not fetch IP from ${url}:`, error.message);
-                    // Conserve la valeur N/A ou celle détectée par le serveur si la requête échoue
-                    // Assurez-vous de ne pas supprimer le loader si l'IP est toujours N/A
-                    if (element.textContent.trim() === 'N/A' || element.textContent.includes('<span class="loader"')) {
-                        // Ne rien faire si c'est N/A ou si le loader est déjà là
-                    } else if (!element.textContent.includes('N/A')) {
-                        // Si une IP était affichée et que le fetch échoue, on ne la remplace pas par N/A
-                    } else {
-                        element.textContent = 'N/A';
-                    }
+                    element.textContent = "N/A"; // Affiche "N/A" si la requête échoue
                 } finally {
                     if (loaderElement) {
                         loaderElement.style.display = 'none';
