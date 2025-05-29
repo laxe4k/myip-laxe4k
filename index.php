@@ -58,8 +58,7 @@ foreach ($ipCandidates as $candidate) {
         } else if ($ipv6_server === "N/A") {
             $ipv6_server = $candidate;
         }
-    } 
-    else if (filter_var($candidate, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+    } else if (filter_var($candidate, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
         if ($ipv4_server === "N/A") {
             $ipv4_server = $candidate;
         }
@@ -110,6 +109,7 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($meta['language']); ?>">
+
 <head>
     <meta charset="<?php echo htmlspecialchars($meta['charset']); ?>">
     <meta name="viewport" content="<?php echo htmlspecialchars($meta['viewport']); ?>">
@@ -123,16 +123,17 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
     <meta name="apple-mobile-web-app-title" content="MyIP" />
     <link rel="manifest" href="/assets/img/site.webmanifest" />
     <?php foreach ($meta as $name => $content): ?>
-    <?php if (!in_array($name, ['charset', 'viewport', 'X-UA-Compatible', 'title', 'language'])): ?>
-    <meta name="<?php echo htmlspecialchars($name); ?>" content="<?php echo htmlspecialchars($content); ?>">
-    <?php endif; ?>
+        <?php if (!in_array($name, ['charset', 'viewport', 'X-UA-Compatible', 'title', 'language'])): ?>
+            <meta name="<?php echo htmlspecialchars($name); ?>" content="<?php echo htmlspecialchars($content); ?>">
+        <?php endif; ?>
     <?php endforeach; ?>
-    
+
     <title><?php echo htmlspecialchars($meta['title']); ?></title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css?v=<?php echo time(); ?>"> 
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -203,7 +204,9 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 secondes timeout
 
-                    const response = await fetch(url, { signal: controller.signal });
+                    const response = await fetch(url, {
+                        signal: controller.signal
+                    });
                     clearTimeout(timeoutId);
 
                     if (!response.ok) {
@@ -214,7 +217,7 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                 } catch (error) {
                     console.warn(`Could not fetch IP from ${url}:`, error.message);
                     // Conserve la valeur N/A ou celle détectée par le serveur si la requête échoue
-                    element.textContent = element.textContent.replace(/<span class="loader".*?><\/span>/, '').trim() || 'N/A'; 
+                    element.textContent = element.textContent.replace(/<span class="loader".*?><\/span>/, '').trim() || 'N/A';
                 } finally {
                     if (loaderElement) {
                         loaderElement.style.display = 'none';
@@ -223,9 +226,11 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
             };
 
             // Initialiser les loaders
-            if (ipv4ValueEl.textContent.trim() === 'N/A' || ipv4ValueEl.textContent.includes('<span class="loader"')) ipv4LoaderEl.style.display = 'inline-block'; else ipv4LoaderEl.style.display = 'none';
-            if (ipv6ValueEl.textContent.trim() === 'N/A' || ipv6ValueEl.textContent.includes('<span class="loader"')) ipv6LoaderEl.style.display = 'inline-block'; else ipv6LoaderEl.style.display = 'none';
-            
+            if (ipv4ValueEl.textContent.trim() === 'N/A' || ipv4ValueEl.textContent.includes('<span class="loader"')) ipv4LoaderEl.style.display = 'inline-block';
+            else ipv4LoaderEl.style.display = 'none';
+            if (ipv6ValueEl.textContent.trim() === 'N/A' || ipv6ValueEl.textContent.includes('<span class="loader"')) ipv6LoaderEl.style.display = 'inline-block';
+            else ipv6LoaderEl.style.display = 'none';
+
             // Si la valeur initiale est N/A, on la remplace par le loader pour l'affichage
             if (ipv4ValueEl.textContent.trim() === 'N/A') ipv4ValueEl.innerHTML = '<span class="loader" id="ipv4-loader"></span>';
             if (ipv6ValueEl.textContent.trim() === 'N/A') ipv6ValueEl.innerHTML = '<span class="loader" id="ipv6-loader"></span>';
@@ -236,4 +241,5 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
         });
     </script>
 </body>
+
 </html>
