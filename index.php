@@ -114,6 +114,7 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
     <meta charset="<?php echo htmlspecialchars($meta['charset']); ?>">
     <meta name="viewport" content="<?php echo htmlspecialchars($meta['viewport']); ?>">
     <meta http-equiv="X-UA-Compatible" content="<?php echo htmlspecialchars($meta['X-UA-Compatible']); ?>">
+    <meta name="color-scheme" content="light dark">
     <!-- icon -->
     <link rel="icon" type="image/png" href="/assets/img/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
