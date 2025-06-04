@@ -12,7 +12,9 @@ $meta = [
     "language" => "fr",
     "viewport" => "width=device-width, initial-scale=1.0",
     "charset" => "UTF-8",
-    "X-UA-Compatible" => "IE=edge"
+    "X-UA-Compatible" => "IE=edge",
+    "url" => "https://myip.laxe4k.com",
+    "theme-color" => "#1a73e8"
 ];
 // ----------------------
 
@@ -96,6 +98,14 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->country)
 $isp = ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->isp)) ? $ipGeoData->isp : "N/A";
 $asn = ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->as)) ? $ipGeoData->as : "N/A";
 $timezone = ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->timezone)) ? $ipGeoData->timezone : "N/A";
+$countryCode = ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->countryCode)) ? $ipGeoData->countryCode : null;
+$hostname = 'N/A';
+if ($lookupIP !== 'N/A') {
+    $resolved = gethostbyaddr($lookupIP);
+    if ($resolved && $resolved !== $lookupIP) {
+        $hostname = $resolved;
+    }
+}
 
 // If geolocation API returns an IP, and our server-side detection missed one, update it.
 // This is a secondary check. Primary IP detection for display will be client-side.
@@ -122,6 +132,13 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="MyIP" />
     <link rel="manifest" href="/assets/img/site.webmanifest" />
+    <link rel="canonical" href="<?php echo htmlspecialchars($meta['url']); ?>" />
+    <meta property="og:title" content="<?php echo htmlspecialchars($meta['title']); ?>" />
+    <meta property="og:description" content="<?php echo htmlspecialchars($meta['description']); ?>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<?php echo htmlspecialchars($meta['url']); ?>" />
+    <meta property="og:image" content="/assets/img/web-app-manifest-512x512.png" />
+    <meta name="theme-color" content="<?php echo htmlspecialchars($meta['theme-color']); ?>" />
     <?php foreach ($meta as $name => $content): ?>
         <?php if (!in_array($name, ['charset', 'viewport', 'X-UA-Compatible', 'title', 'language'])): ?>
             <meta name="<?php echo htmlspecialchars($name); ?>" content="<?php echo htmlspecialchars($content); ?>">
@@ -167,6 +184,10 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                         </button>
                     </div>
                 </div>
+                <div class="info-item">
+                    <span class="label">Nom d'hôte :</span>
+                    <span class="value" id="hostname-value"><?php echo htmlspecialchars($hostname); ?></span>
+                </div>
             </section>
 
             <section class="info-section">
@@ -185,7 +206,12 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                 </div>
                 <div class="info-item">
                     <span class="label">Pays :</span>
-                    <span class="value"><?php echo htmlspecialchars($countryDisplay); ?></span>
+                    <span class="value">
+                        <?php echo htmlspecialchars($countryDisplay); ?>
+                        <?php if ($countryCode): ?>
+                            <img src="https://flagcdn.com/24x18/<?php echo strtolower($countryCode); ?>.png" alt="<?php echo htmlspecialchars($countryCode); ?>" width="24" height="18" style="margin-left:4px;vertical-align:text-bottom;">
+                        <?php endif; ?>
+                    </span>
                 </div>
                 <div class="info-item">
                     <span class="label">FAI (ISP) :</span>
@@ -198,6 +224,10 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
                 <div class="info-item">
                     <span class="label">Fuseau Horaire :</span>
                     <span class="value"><?php echo htmlspecialchars($timezone); ?></span>
+                </div>
+                <div class="info-item">
+                    <span class="label">Heure locale :</span>
+                    <span class="value" id="localtime-value"></span>
                 </div>
             </section>
         </main>
@@ -257,7 +287,23 @@ if ($ipGeoData && $ipGeoData->status === 'success' && isset($ipGeoData->query)) 
 
 
             fetchIp('https://ipv4.icanhazip.com', ipv4ValueEl, document.getElementById('ipv4-loader'));
+            fetchIp('https://api.ipify.org', ipv4ValueEl);
             fetchIp('https://ipv6.icanhazip.com', ipv6ValueEl, document.getElementById('ipv6-loader'));
+            fetchIp('https://api64.ipify.org', ipv6ValueEl);
+
+            const timezoneValue = <?php echo json_encode($timezone); ?>;
+            const updateLocalTime = () => {
+                const el = document.getElementById('localtime-value');
+                if (!el) return;
+                if (timezoneValue && timezoneValue !== 'N/A') {
+                    const now = new Date().toLocaleString('fr-FR', { timeZone: timezoneValue });
+                    el.textContent = now;
+                } else {
+                    el.textContent = 'N/A';
+                }
+            };
+            updateLocalTime();
+            setInterval(updateLocalTime, 1000);
 
             document.querySelectorAll('.copy-btn').forEach(button => {
                 button.addEventListener('click', () => {
