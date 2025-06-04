@@ -13,6 +13,8 @@
 - **Localisation géographique** : indique le pays et la ville correspondants à votre adresse IP.
 - **Coordonnées GPS** : fournit la latitude et la longitude de votre emplacement.
 - **Date et heure actuelles** : affiche la date et l'heure locales en temps réel.
+- **Drapeau du pays** : affiche l'emoji ou le drapeau correspondant au code pays.
+- **Balises Open&nbsp;Graph** : meilleures prévisualisations lors du partage.
 
 ## Technologies utilisées
 

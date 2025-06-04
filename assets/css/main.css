@@ -61,6 +61,10 @@ header h1 {
     word-break: break-all;
     margin-right: 8px; /* Ajoute un petit espace entre l'IP et le bouton de copie */
 }
+.info-item .value img {
+    margin-left: 4px;
+    vertical-align: text-bottom;
+}
 
 .value-action-group {
     display: flex; /* Aligne l'IP et le bouton sur la même ligne */
